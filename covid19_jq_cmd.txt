@@ -1,0 +1,53 @@
+jq 'keys' covid19.json
+jq -c keys covid19.json 
+jq 'keys[]' covid19.json
+jq -r 'keys[]' covid19.json
+jq -c 'keys | to_entries' covid19.json
+jq -c 'keys[0]' covid19.json
+jq -r 'keys[] | in({"Kansas" : 0})' covid19.json
+jq 'keys[] | select(contains("K"))' covid19.json
+jq 'keys[] | select(startswith("N"))' covid19.json 
+jq .Kansas covid19.json
+jq '.Kansas | length' covid19.json
+jq '.Kansas | map(has("case"))' covid19.json
+jq '.Kansas | sort_by(.case)' covid19.json 
+jq '.Kansas[] | {case}' covid19.json
+jq '.Kansas[] | .case' covid19.json
+jq '."New York"' covid19.json
+jq .Kansas[] covid19.json
+jq '.Kansas[] | length' covid19.json
+jq '.Kansas[][]' covid19.json
+jq '.Kansas[][] | length' covid19.json
+jq .Kansas[3] covid19.json
+jq '.Kansas | .[3]' covid19.json
+jq '.Kansas | .[-2]' covid19.json
+jq '.Kansas[2:4]' covid19.json
+jq '.Kansas[2:4][]' covid19.json
+jq '.Kansas | .[2:4][]' covid19.json
+jq '.Kansas | .[1,4][]' covid19.json
+jq '.Kansas[] | .date' covid19.json
+jq '.Kansas[] | .date, .case' covid19.json
+jq '.Kansas[] | .date, .case > 500' covid19.json
+jq '.Kansas[] | select(.case > 500)' covid19.json
+jq '.Kansas[] | select(.date > "0403" and .case > 500)' covid19.json
+jq '.Kansas[] | select(.case > 500).date' covid19.json
+jq '.Kansas[] | select(.date == "0404")' covid19.json
+jq '.[][] | select(.date == "0404")' covid19.json
+jq .[] covid19.json
+jq -c 'to_entries' covid19.json
+jq 'to_entries' covid19.json
+jq 'del(.Kansas) | del(."New York")' covid19.json
+cat covid19.json | jq -c . | jq -c keys
+cat covid19.json | jq -c .[] | jq -c keys
+cat covid19.json | jq -c .[][] | jq -c keys
+cat covid19.json | jq -c '. | length'
+cat covid19.json | jq -c '.Kansas | length'
+cat covid19.json | jq -c '.Kansas[] | length'
+cat covid19.json | jq -c '.Kansas[][] | length'
+cat covid19.json | jq --sort-keys
+cat covid19.json | jq --arg DATE 0404 '.Kansas[] | select(.date == $DATE)'
+jq -c '[.Kansas[] | .case]' covid19.json
+jq -c '[.Kansas[] | .case] | add' covid19.json
+jq .[][].case covid19.json 
+jq '[.[][].case]' covid19.json 
+jq '[.[][].case] | add' covid19.json 

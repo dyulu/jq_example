@@ -1,0 +1,633 @@
+$ jq 'keys' covid19.json
+[
+  "California",
+  "Kansas",
+  "New York"
+]
+$ jq -c keys covid19.json 
+["California","Kansas","New York"]
+$ jq 'keys[]' covid19.json
+"California"
+"Kansas"
+"New York"
+$ jq -r 'keys[]' covid19.json
+California
+Kansas
+New York
+$ jq -c 'keys | to_entries' covid19.json
+[{"key":0,"value":"California"},{"key":1,"value":"Kansas"},{"key":2,"value":"New York"}]
+$ jq -c 'keys[0]' covid19.json
+"California"
+$ jq -r 'keys[] | in({"Kansas" : 0})' covid19.json
+false
+true
+false
+$ jq 'keys[] | select(contains("K"))' covid19.json
+"Kansas"
+$ jq 'keys[] | select(startswith("N"))' covid19.json 
+"New York"
+$ jq .Kansas covid19.json
+[
+  {
+    "date": "0401",
+    "case": 485
+  },
+  {
+    "date": "0402",
+    "case": 555
+  },
+  {
+    "date": "0403",
+    "case": 623
+  },
+  {
+    "date": "0404",
+    "case": 701
+  },
+  {
+    "date": "0405",
+    "case": 750
+  }
+]
+$ jq '.Kansas | length' covid19.json
+5
+$ jq '.Kansas | map(has("case"))' covid19.json
+[
+  true,
+  true,
+  true,
+  true,
+  true
+]
+$ jq '.Kansas | sort_by(.case)' covid19.json 
+[
+  {
+    "date": "0401",
+    "case": 485
+  },
+  {
+    "date": "0402",
+    "case": 555
+  },
+  {
+    "date": "0403",
+    "case": 623
+  },
+  {
+    "date": "0404",
+    "case": 701
+  },
+  {
+    "date": "0405",
+    "case": 750
+  }
+]
+$ jq '.Kansas[] | {case}' covid19.json
+{
+  "case": 485
+}
+{
+  "case": 555
+}
+{
+  "case": 623
+}
+{
+  "case": 701
+}
+{
+  "case": 750
+}
+$ jq '.Kansas[] | .case' covid19.json
+485
+555
+623
+701
+750
+$ jq '."New York"' covid19.json
+[
+  {
+    "date": "0401",
+    "case": 83712
+  },
+  {
+    "date": "0402",
+    "case": 92381
+  },
+  {
+    "date": "0403",
+    "case": 102863
+  },
+  {
+    "date": "0404",
+    "case": 113704
+  },
+  {
+    "date": "0405",
+    "case": 122031
+  }
+]
+$ jq .Kansas[] covid19.json
+{
+  "date": "0401",
+  "case": 485
+}
+{
+  "date": "0402",
+  "case": 555
+}
+{
+  "date": "0403",
+  "case": 623
+}
+{
+  "date": "0404",
+  "case": 701
+}
+{
+  "date": "0405",
+  "case": 750
+}
+$ jq '.Kansas[] | length' covid19.json
+2
+2
+2
+2
+2
+$ jq '.Kansas[][]' covid19.json
+"0401"
+485
+"0402"
+555
+"0403"
+623
+"0404"
+701
+"0405"
+750
+$ jq '.Kansas[][] | length' covid19.json
+4
+485
+4
+555
+4
+623
+4
+701
+4
+750
+$ jq .Kansas[3] covid19.json
+{
+  "date": "0404",
+  "case": 701
+}
+$ jq '.Kansas | .[3]' covid19.json
+{
+  "date": "0404",
+  "case": 701
+}
+$ jq '.Kansas | .[-2]' covid19.json
+{
+  "date": "0404",
+  "case": 701
+}
+$ jq '.Kansas[2:4]' covid19.json
+[
+  {
+    "date": "0403",
+    "case": 623
+  },
+  {
+    "date": "0404",
+    "case": 701
+  }
+]
+$ jq '.Kansas[2:4][]' covid19.json
+{
+  "date": "0403",
+  "case": 623
+}
+{
+  "date": "0404",
+  "case": 701
+}
+$ jq '.Kansas | .[2:4][]' covid19.json
+{
+  "date": "0403",
+  "case": 623
+}
+{
+  "date": "0404",
+  "case": 701
+}
+$ jq '.Kansas | .[1,4][]' covid19.json
+"0402"
+555
+"0405"
+750
+$ jq '.Kansas[] | .date' covid19.json
+"0401"
+"0402"
+"0403"
+"0404"
+"0405"
+$ jq '.Kansas[] | .date, .case' covid19.json
+"0401"
+485
+"0402"
+555
+"0403"
+623
+"0404"
+701
+"0405"
+750
+$ jq '.Kansas[] | .date, .case > 500' covid19.json
+"0401"
+false
+"0402"
+true
+"0403"
+true
+"0404"
+true
+"0405"
+true
+$ jq '.Kansas[] | select(.case > 500)' covid19.json
+{
+  "date": "0402",
+  "case": 555
+}
+{
+  "date": "0403",
+  "case": 623
+}
+{
+  "date": "0404",
+  "case": 701
+}
+{
+  "date": "0405",
+  "case": 750
+}
+$ jq '.Kansas[] | select(.date > "0403" and .case > 500)' covid19.json
+{
+  "date": "0404",
+  "case": 701
+}
+{
+  "date": "0405",
+  "case": 750
+}
+$ jq '.Kansas[] | select(.case > 500).date' covid19.json
+"0402"
+"0403"
+"0404"
+"0405"
+$ jq '.Kansas[] | select(.date == "0404")' covid19.json
+{
+  "date": "0404",
+  "case": 701
+}
+$ jq '.[][] | select(.date == "0404")' covid19.json
+{
+  "date": "0404",
+  "case": 13438
+}
+{
+  "date": "0404",
+  "case": 701
+}
+{
+  "date": "0404",
+  "case": 113704
+}
+$ jq .[] covid19.json
+[
+  {
+    "date": "0401",
+    "case": 9191
+  },
+  {
+    "date": "0402",
+    "case": 10701
+  },
+  {
+    "date": "0403",
+    "case": 12026
+  },
+  {
+    "date": "0404",
+    "case": 13438
+  },
+  {
+    "date": "0405",
+    "case": 14336
+  }
+]
+[
+  {
+    "date": "0401",
+    "case": 485
+  },
+  {
+    "date": "0402",
+    "case": 555
+  },
+  {
+    "date": "0403",
+    "case": 623
+  },
+  {
+    "date": "0404",
+    "case": 701
+  },
+  {
+    "date": "0405",
+    "case": 750
+  }
+]
+[
+  {
+    "date": "0401",
+    "case": 83712
+  },
+  {
+    "date": "0402",
+    "case": 92381
+  },
+  {
+    "date": "0403",
+    "case": 102863
+  },
+  {
+    "date": "0404",
+    "case": 113704
+  },
+  {
+    "date": "0405",
+    "case": 122031
+  }
+]
+$ jq -c 'to_entries' covid19.json
+[{"key":"California","value":[{"date":"0401","case":9191},{"date":"0402","case":10701},{"date":"0403","case":12026},{"date":"0404","case":13438},{"date":"0405","case":14336}]},{"key":"Kansas","value":[{"date":"0401","case":485},{"date":"0402","case":555},{"date":"0403","case":623},{"date":"0404","case":701},{"date":"0405","case":750}]},{"key":"New York","value":[{"date":"0401","case":83712},{"date":"0402","case":92381},{"date":"0403","case":102863},{"date":"0404","case":113704},{"date":"0405","case":122031}]}]
+$ jq 'to_entries' covid19.json
+[
+  {
+    "key": "California",
+    "value": [
+      {
+        "date": "0401",
+        "case": 9191
+      },
+      {
+        "date": "0402",
+        "case": 10701
+      },
+      {
+        "date": "0403",
+        "case": 12026
+      },
+      {
+        "date": "0404",
+        "case": 13438
+      },
+      {
+        "date": "0405",
+        "case": 14336
+      }
+    ]
+  },
+  {
+    "key": "Kansas",
+    "value": [
+      {
+        "date": "0401",
+        "case": 485
+      },
+      {
+        "date": "0402",
+        "case": 555
+      },
+      {
+        "date": "0403",
+        "case": 623
+      },
+      {
+        "date": "0404",
+        "case": 701
+      },
+      {
+        "date": "0405",
+        "case": 750
+      }
+    ]
+  },
+  {
+    "key": "New York",
+    "value": [
+      {
+        "date": "0401",
+        "case": 83712
+      },
+      {
+        "date": "0402",
+        "case": 92381
+      },
+      {
+        "date": "0403",
+        "case": 102863
+      },
+      {
+        "date": "0404",
+        "case": 113704
+      },
+      {
+        "date": "0405",
+        "case": 122031
+      }
+    ]
+  }
+]
+$ jq 'del(.Kansas) | del(."New York")' covid19.json
+{
+  "California": [
+    {
+      "date": "0401",
+      "case": 9191
+    },
+    {
+      "date": "0402",
+      "case": 10701
+    },
+    {
+      "date": "0403",
+      "case": 12026
+    },
+    {
+      "date": "0404",
+      "case": 13438
+    },
+    {
+      "date": "0405",
+      "case": 14336
+    }
+  ]
+}
+$ cat covid19.json | jq -c . | jq -c keys
+["California","Kansas","New York"]
+$ cat covid19.json | jq -c .[] | jq -c keys
+[0,1,2,3,4]
+[0,1,2,3,4]
+[0,1,2,3,4]
+$ cat covid19.json | jq -c .[][] | jq -c keys
+["case","date"]
+["case","date"]
+["case","date"]
+["case","date"]
+["case","date"]
+["case","date"]
+["case","date"]
+["case","date"]
+["case","date"]
+["case","date"]
+["case","date"]
+["case","date"]
+["case","date"]
+["case","date"]
+["case","date"]
+$ cat covid19.json | jq -c '. | length'
+3
+$ cat covid19.json | jq -c '.Kansas | length'
+5
+$ cat covid19.json | jq -c '.Kansas[] | length'
+2
+2
+2
+2
+2
+$ cat covid19.json | jq -c '.Kansas[][] | length'
+4
+485
+4
+555
+4
+623
+4
+701
+4
+750
+$ cat covid19.json | jq --sort-keys
+{
+  "California": [
+    {
+      "case": 9191,
+      "date": "0401"
+    },
+    {
+      "case": 10701,
+      "date": "0402"
+    },
+    {
+      "case": 12026,
+      "date": "0403"
+    },
+    {
+      "case": 13438,
+      "date": "0404"
+    },
+    {
+      "case": 14336,
+      "date": "0405"
+    }
+  ],
+  "Kansas": [
+    {
+      "case": 485,
+      "date": "0401"
+    },
+    {
+      "case": 555,
+      "date": "0402"
+    },
+    {
+      "case": 623,
+      "date": "0403"
+    },
+    {
+      "case": 701,
+      "date": "0404"
+    },
+    {
+      "case": 750,
+      "date": "0405"
+    }
+  ],
+  "New York": [
+    {
+      "case": 83712,
+      "date": "0401"
+    },
+    {
+      "case": 92381,
+      "date": "0402"
+    },
+    {
+      "case": 102863,
+      "date": "0403"
+    },
+    {
+      "case": 113704,
+      "date": "0404"
+    },
+    {
+      "case": 122031,
+      "date": "0405"
+    }
+  ]
+}
+$ cat covid19.json | jq --arg DATE 0404 '.Kansas[] | select(.date == $DATE)'
+{
+  "date": "0404",
+  "case": 701
+}
+$ jq -c '[.Kansas[] | .case]' covid19.json
+[485,555,623,701,750]
+$ jq -c '[.Kansas[] | .case] | add' covid19.json
+3114
+$ jq .[][].case covid19.json 
+9191
+10701
+12026
+13438
+14336
+485
+555
+623
+701
+750
+83712
+92381
+102863
+113704
+122031
+$ jq '[.[][].case]' covid19.json 
+[
+  9191,
+  10701,
+  12026,
+  13438,
+  14336,
+  485,
+  555,
+  623,
+  701,
+  750,
+  83712,
+  92381,
+  102863,
+  113704,
+  122031
+]
+$ jq '[.[][].case] | add' covid19.json 
+577497
